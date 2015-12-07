@@ -1,5 +1,41 @@
 #!/bin/sh
 
+# default options
+HTTP_PORT=8080
+
+usage() {
+cat << EOF
+    Usage: $0 [options] <merchant id> <shared secret>
+
+    This script starts a minimal web server providing an easy to use interface for a Klarna Checkout sandbox.
+    
+    EXAMPLE:
+        $0 1234 YourSharedSecretHere
+
+    OPTIONS:
+       -h      Show this help message
+       -p      HTTP server port
+
+EOF
+}
+
+# read options
+while getopts "hp:" OPTION
+do
+    case $OPTION in
+        h)
+            usage
+            exit 0
+            ;;
+        p)
+            HTTP_PORT=$OPTARG
+            ;;
+        \?)
+            exit 1
+            ;;
+    esac
+done
+
 # shared secret passed as argument
 MERCHANT_ID=${@:$OPTIND:1}
 SHARED_SECRET=${@:$OPTIND+1:1}
