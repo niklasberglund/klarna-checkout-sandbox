@@ -1,16 +1,14 @@
 #!/bin/sh
 
 # shared secret passed as argument
-SHARED_SECRET=${@:$OPTIND:1}
+MERCHANT_ID=${@:$OPTIND:1}
+SHARED_SECRET=${@:$OPTIND+1:1}
 
 # Klarna Checkout test drive. DO NOT USE THIS SCRIPT WITH THE PRODUCTION API
 API_URL="https://checkout.testdrive.klarna.com/checkout/orders"
 
-PAYLOAD=$(cat payload.json)
-
 create_digest() {
 	PAYLOAD=$1
-	SHARED_SECRET=$2
 	
 	DIGEST=$(php -r '$payload=$argv[1]; $sharedSecret=$argv[2]; echo base64_encode(hash("sha256", "{$payload}{$sharedSecret}", true));' "$PAYLOAD" "$SHARED_SECRET")
 	
@@ -46,7 +44,11 @@ get_order_snippet() {
 	echo $KLARNA_CHECKOUT_SNIPPET
 }
 
-ORDER_LOCATION=$(create_order)
+# use specified merchant id
+PAYLOAD=$(cat payload.json | sed "s/%MERCHANT_ID_HERE%/$MERCHANT_ID/g")
+
+# returns location of order resource
+ORDER_LOCATION=$(create_order "$PAYLOAD")
 echo "$ORDER_LOCATION"
 
 KLARNA_CHECKOUT_SNIPPET=$(get_order_snippet "$ORDER_LOCATION")
