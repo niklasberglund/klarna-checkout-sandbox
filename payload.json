@@ -43,7 +43,7 @@
         "layout": "desktop"
     },
     "merchant": {
-        "id": "5620",
+        "id": "%MERCHANT_ID_HERE%",
         "back_to_store_uri": "http://example.com",
         "terms_uri": "http://example.com/terms.php",
         "checkout_uri": "https://example.com/checkout.php",
