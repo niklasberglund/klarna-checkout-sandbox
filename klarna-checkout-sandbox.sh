@@ -38,7 +38,7 @@ get_order_snippet() {
 	CURL_GET_ORDER=$(curl -vs \
 		--header "Accept: application/vnd.klarna.checkout.aggregated-order-v2+json" \
 		--header "Authorization: Klarna $AUTHORIZATION_STRING" \
-		"$ORDER_LOCATION")
+		"$ORDER_LOCATION" 2>&1)
 	
 	KLARNA_CHECKOUT_SNIPPET=$(echo "$CURL_GET_ORDER" | perl -0777 -ne 'print $1 if /\"snippet\":\"(.*?)\"},/s')
 	echo $KLARNA_CHECKOUT_SNIPPET
