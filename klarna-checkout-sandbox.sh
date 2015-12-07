@@ -40,6 +40,18 @@ done
 MERCHANT_ID=${@:$OPTIND:1}
 SHARED_SECRET=${@:$OPTIND+1:1}
 
+if [ -z "$MERCHANT_ID" ]
+then
+	echo "You must specify your Klarna Checkout merchant id. For help see -h"
+	exit 1
+fi
+
+if [ -z "$SHARED_SECRET" ]
+then
+	echo "You must specify your shared secret for Klarna Checkout. For help see -h"
+	exit 1
+fi
+
 # Klarna Checkout test drive. DO NOT USE THIS SCRIPT WITH THE PRODUCTION API
 API_URL="https://checkout.testdrive.klarna.com/checkout/orders"
 
