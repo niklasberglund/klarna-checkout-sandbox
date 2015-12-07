@@ -3,6 +3,12 @@
 # default options
 HTTP_PORT=8080
 
+trap cleanup INT
+
+function cleanup() {
+	kill $$ # self pid
+}
+
 usage() {
 cat << EOF
     Usage: $0 [options] <merchant id> <shared secret>
