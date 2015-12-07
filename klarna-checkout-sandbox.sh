@@ -80,7 +80,7 @@ create_order() {
 get_order_snippet() {
 	ORDER_LOCATION=$1
 	
-	PAYLOAD=""
+	PAYLOAD="" # empty payload for GET requests
 	AUTHORIZATION_STRING=$(create_digest "$PAYLOAD" "$SHARED_SECRET")
 	
 	CURL_GET_ORDER=$(curl -vs \
