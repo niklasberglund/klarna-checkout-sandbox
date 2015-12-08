@@ -110,5 +110,5 @@ do
 	KLARNA_CHECKOUT_SNIPPET=$(get_order_snippet "$ORDER_LOCATION")
 	
 	echo "Order info retrieved. Listening for connection..."
-	echo "$KLARNA_CHECKOUT_SNIPPET" | nc -l 127.0.0.1 $HTTP_PORT -
+	echo "HTTP/1.1 200 OK\r\n$(date)\r\n\r\n$KLARNA_CHECKOUT_SNIPPET" | nc -l 127.0.0.1 $HTTP_PORT -
 done
