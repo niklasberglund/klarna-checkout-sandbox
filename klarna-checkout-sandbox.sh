@@ -101,6 +101,7 @@ get_order_snippet() {
 	echo $KLARNA_CHECKOUT_SNIPPET
 }
 
+# creds to http://paulbuchheit.blogspot.ro/2007/04/webserver-in-bash.html which inspired this fifo and nc solution
 RESP=/tmp/webresp
 [ -p $RESP ] || mkfifo $RESP
 
