@@ -107,7 +107,7 @@ RESP=/tmp/webresp
 
 while true
 do
-	( cat $RESPONSE ) | nc -l 9000 | (
+	( cat $RESPONSE ) | nc -l $HTTP_PORT | (
 	REQUEST=`while read L && [ " " "<" "$L" ] ; do echo "$L" ; done`
 	echo "[`date '+%Y-%m-%d %H:%M:%S'`] $REQUEST" | head -1
 	
