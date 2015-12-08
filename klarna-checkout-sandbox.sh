@@ -136,7 +136,7 @@ do
 		RESPONSE_BODY="$KLARNA_CHECKOUT_SNIPPET"
 	fi
 	
-	cat > $RESPONSE <<EOF
+	cat > $RESPONSE << EOF
 HTTP/1.0 $RESPONSE_CODE_STRING
 Cache-Control: private
 Content-type: text/html
