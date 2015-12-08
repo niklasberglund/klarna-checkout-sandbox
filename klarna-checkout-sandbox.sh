@@ -5,9 +5,6 @@ HTTP_PORT=8080
 
 trap cleanup INT
 
-RESPONSE=/tmp/klarna-checkout-sandbox-response
-[ -p $RESPONSE ] || mkfifo $RESPONSE
-
 function cleanup() {
 	kill $$ # self pid
 }
@@ -102,8 +99,8 @@ get_order_snippet() {
 }
 
 # creds to http://paulbuchheit.blogspot.ro/2007/04/webserver-in-bash.html which inspired this fifo and nc solution
-RESP=/tmp/webresp
-[ -p $RESP ] || mkfifo $RESP
+RESPONSE=/tmp/klarna-checkout-sandbox-response
+[ -p $RESPONSE ] || mkfifo $RESPONSE
 
 while true
 do
