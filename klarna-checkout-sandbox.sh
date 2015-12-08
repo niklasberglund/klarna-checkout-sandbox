@@ -36,7 +36,7 @@ do
         p)
             HTTP_PORT=$OPTARG
             ;;
-        \?)
+        ?)
             exit 1
             ;;
     esac
@@ -98,12 +98,17 @@ get_order_snippet() {
 	echo $KLARNA_CHECKOUT_SNIPPET
 }
 
-# use specified merchant id
-PAYLOAD=$(cat payload.json | sed "s/%MERCHANT_ID_HERE%/$MERCHANT_ID/g")
-
-# returns location of order resource
-ORDER_LOCATION=$(create_order "$PAYLOAD")
-echo "$ORDER_LOCATION"
-
-KLARNA_CHECKOUT_SNIPPET=$(get_order_snippet "$ORDER_LOCATION")
-echo $KLARNA_CHECKOUT_SNIPPET
+while true
+do
+	echo "Creating order with Klarna Checkout so that we're prepared when order info is asked for..."
+	
+	# use specified merchant id
+	PAYLOAD=$(cat payload.json | sed "s/%MERCHANT_ID_HERE%/$MERCHANT_ID/g")
+	
+	# create order and then get it's snippet
+	ORDER_LOCATION=$(create_order "$PAYLOAD")
+	KLARNA_CHECKOUT_SNIPPET=$(get_order_snippet "$ORDER_LOCATION")
+	
+	echo "Order info retrieved. Listening for connection..."
+	echo "$KLARNA_CHECKOUT_SNIPPET" | nc -l 127.0.0.1 $HTTP_PORT -
+done
