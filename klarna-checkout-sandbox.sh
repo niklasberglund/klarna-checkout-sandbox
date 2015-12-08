@@ -95,7 +95,7 @@ get_order_snippet() {
 		"$ORDER_LOCATION" 2>&1)
 	
 	KLARNA_CHECKOUT_SNIPPET=$(echo "$CURL_GET_ORDER" | perl -0777 -ne 'print $1 if /\"snippet\":\"(.*?)\"},/s')
-	echo $KLARNA_CHECKOUT_SNIPPET
+	echo "$KLARNA_CHECKOUT_SNIPPET"
 }
 
 echo "[`date '+%Y-%m-%d %H:%M:%S'`] Listening for requests. To create a sample order and get it's snippet send a request to http://127.0.0.1:$HTTP_PORT/order"
