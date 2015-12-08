@@ -5,6 +5,10 @@ HTTP_PORT=8080
 
 trap cleanup INT
 
+RESPONSE=/tmp/klarna-checkout-sandbox-response
+[ -p $RESPONSE ] || mkfifo $RESPONSE
+#mkfifo $RESPONSE
+
 function cleanup() {
 	kill $$ # self pid
 }
@@ -98,17 +102,51 @@ get_order_snippet() {
 	echo $KLARNA_CHECKOUT_SNIPPET
 }
 
+RESP=/tmp/webresp
+[ -p $RESP ] || mkfifo $RESP
+
 while true
 do
-	echo "Creating order with Klarna Checkout so that we're prepared when order info is asked for..."
+	( cat $RESPONSE ) | nc -l 9000 | (
+	REQUEST=`while read L && [ " " "<" "$L" ] ; do echo "$L" ; done`
+	echo "[`date '+%Y-%m-%d %H:%M:%S'`] $REQUEST" | head -1
 	
-	# use specified merchant id
-	PAYLOAD=$(cat payload.json | sed "s/%MERCHANT_ID_HERE%/$MERCHANT_ID/g")
+	# extract request type and requested resource
+	REQUEST_TYPE_AND_RESOURCE=$(echo "$REQUEST" | head -1 | perl -ne '/(.*?) (.*?) HTTP/ && print "$1,$2"')
+	REQUEST_TYPE=$(echo "$REQUEST_TYPE_AND_RESOURCE" | cut -d "," -f 1)
+	REQUEST_RESOURCE=$(echo "$REQUEST_TYPE_AND_RESOURCE" | cut -d "," -f 2)
 	
-	# create order and then get it's snippet
-	ORDER_LOCATION=$(create_order "$PAYLOAD")
-	KLARNA_CHECKOUT_SNIPPET=$(get_order_snippet "$ORDER_LOCATION")
+	if [ "$REQUEST_RESOURCE" != "/order" ]
+	then
+		RESPONSE_CODE_STRING="404 Not Found"
+		RESPONSE_BODY=""
+	else
+		RESPONSE_CODE_STRING="200 OK"
+		
+		echo "[`date '+%Y-%m-%d %H:%M:%S'`] Creating order..."
 	
-	echo "Order info retrieved. Listening for connection..."
-	echo "HTTP/1.1 200 OK\r\n$(date)\r\n\r\n$KLARNA_CHECKOUT_SNIPPET" | nc -l 127.0.0.1 $HTTP_PORT -
+		# use specified merchant id
+		PAYLOAD=$(cat payload.json | sed "s/%MERCHANT_ID_HERE%/$MERCHANT_ID/g")
+		
+		# create order and then get it's snippet
+		ORDER_LOCATION=$(create_order "$PAYLOAD")
+		KLARNA_CHECKOUT_SNIPPET=$(get_order_snippet "$ORDER_LOCATION")
+		echo "[`date '+%Y-%m-%d %H:%M:%S'`] Order info retrieved."
+		
+		RESPONSE_BODY="$KLARNA_CHECKOUT_SNIPPET"
+	fi
+	
+	cat > $RESPONSE <<EOF
+HTTP/1.0 $RESPONSE_CODE_STRING
+Cache-Control: private
+Content-type: text/html
+Server: Klarna Checkout Sandbox/1.0
+Connection: Close
+Content-Length: ${#RESPONSE_BODY}
+
+$RESPONSE_BODY
+EOF
+
+	echo "[`date '+%Y-%m-%d %H:%M:%S'`] Response sent"
+	)
 done
