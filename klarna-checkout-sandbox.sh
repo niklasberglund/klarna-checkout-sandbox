@@ -125,7 +125,8 @@ do
 		echo "[`date '+%Y-%m-%d %H:%M:%S'`] Creating order..."
 	
 		# use specified merchant id
-		PAYLOAD=$(cat payload.json | sed "s/%MERCHANT_ID_HERE%/$MERCHANT_ID/g")
+		PAYLOAD_TEMPLATE="{ \"merchant_reference\": { \"orderid1\": \"123456789\", \"orderid2\": \"123456789\" }, \"purchase_country\": \"se\", \"purchase_currency\": \"sek\", \"locale\": \"sv-se\", \"cart\": { \"items\": [ { \"reference\": \"123456789\", \"name\": \"Klarna t-shirt\", \"quantity\": 2, \"ean\": \"1234567890123\", \"uri\": \"http://example.com/product.php?123456789\", \"image_uri\": \"http://example.com/product_image.php?123456789\", \"unit_price\": 12300, \"discount_rate\": 1000, \"tax_rate\": 2500 }, { \"type\": \"shipping_fee\", \"reference\": \"SHIPPING\", \"name\": \"Shipping fee\", \"quantity\": 1, \"unit_price\": 4900, \"tax_rate\": 2500 } ] }, \"shipping_address\": { \"given_name\": \"Testperson-se\", \"family_name\": \"Approved\", \"street_address\": \"Stårgatan 1\", \"postal_code\": \"12345\", \"city\": \"Ankeborg\", \"country\": \"se\", \"email\": \"checkout@testdrive.klarna.com\", \"phone\": \"0765260000\" }, \"gui\": { \"layout\": \"desktop\" }, \"merchant\": { \"id\": \"%MERCHANT_ID_HERE%\", \"back_to_store_uri\": \"http://example.com\", \"terms_uri\": \"http://example.com/terms.php\", \"checkout_uri\": \"https://example.com/checkout.php\", \"confirmation_uri\": \"https://example.com/thankyou.php?sid=123&klarna_order={checkout.order.uri}\", \"push_uri\": \"https://example.com/push.php?sid=123&klarna_order={checkout.order.uri}\" } }"
+		PAYLOAD=$(echo "$PAYLOAD_TEMPLATE" | sed "s/%MERCHANT_ID_HERE%/$MERCHANT_ID/g")
 		
 		# create order and then get it's snippet
 		ORDER_LOCATION=$(create_order "$PAYLOAD")
