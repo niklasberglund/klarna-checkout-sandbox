@@ -7,7 +7,6 @@ trap cleanup INT
 
 RESPONSE=/tmp/klarna-checkout-sandbox-response
 [ -p $RESPONSE ] || mkfifo $RESPONSE
-#mkfifo $RESPONSE
 
 function cleanup() {
 	kill $$ # self pid
