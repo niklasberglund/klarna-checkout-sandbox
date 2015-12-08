@@ -42,7 +42,7 @@ do
     esac
 done
 
-# shared secret passed as argument
+# merchant id and shared secret must be passed as arguments
 MERCHANT_ID=${@:$OPTIND:1}
 SHARED_SECRET=${@:$OPTIND+1:1}
 
