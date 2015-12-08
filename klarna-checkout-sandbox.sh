@@ -23,7 +23,7 @@ cat << EOF
 
     OPTIONS:
        -h      Show this help message
-       -p      HTTP server port
+       -p      HTTP server port. Default is 8080
 
 EOF
 }
