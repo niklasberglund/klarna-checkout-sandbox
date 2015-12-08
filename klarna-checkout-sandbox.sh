@@ -94,7 +94,7 @@ get_order_snippet() {
 		--header "Authorization: Klarna $AUTHORIZATION_STRING" \
 		"$ORDER_LOCATION" 2>&1)
 	
-	KLARNA_CHECKOUT_SNIPPET=$(echo "$CURL_GET_ORDER" | perl -0777 -ne 'print $1 if /\"snippet\":\"(.*?)\"},/s')
+	KLARNA_CHECKOUT_SNIPPET=$(echo "$CURL_GET_ORDER" | perl -0777 -ne 'print $1 if /\"snippet\":\"(.*?)\"},/s' | sed 's/\\\"/"/g')
 	echo "$KLARNA_CHECKOUT_SNIPPET"
 }
 
