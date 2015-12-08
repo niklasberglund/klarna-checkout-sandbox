@@ -98,6 +98,8 @@ get_order_snippet() {
 	echo $KLARNA_CHECKOUT_SNIPPET
 }
 
+echo "[`date '+%Y-%m-%d %H:%M:%S'`] Listening for requests. To create a sample order and get it's snippet send a request to http://127.0.0.1:$HTTP_PORT/order"
+
 # creds to http://paulbuchheit.blogspot.ro/2007/04/webserver-in-bash.html which inspired this fifo and nc solution
 RESPONSE=/tmp/klarna-checkout-sandbox-response
 [ -p $RESPONSE ] || mkfifo $RESPONSE
