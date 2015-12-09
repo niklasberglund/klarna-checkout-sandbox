@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# default options
+# default
 HTTP_PORT=8080
 
 trap cleanup INT
