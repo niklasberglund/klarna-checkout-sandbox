@@ -64,7 +64,7 @@ API_URL="https://checkout.testdrive.klarna.com/checkout/orders"
 create_digest() {
 	PAYLOAD=$1
 	
-	DIGEST=$(php -r '$payload=$argv[1]; $sharedSecret=$argv[2]; echo base64_encode(hash("sha256", "{$payload}{$sharedSecret}", true));' "$PAYLOAD" "$SHARED_SECRET")
+	DIGEST=$(printf "$PAYLOAD$SHARED_SECRET" | shasum -a 256 | cut -d " " -f 1 | xxd -r -p | base64)
 	
 	echo "$DIGEST"
 }
