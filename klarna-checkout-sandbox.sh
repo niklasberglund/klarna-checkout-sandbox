@@ -3,6 +3,10 @@
 # default
 HTTP_PORT=8080
 
+# for colored output
+COLOR_RESET='\e[0m'
+COLOR_RED_BOLD='\e[1;31m';
+
 trap cleanup INT
 
 function cleanup() {
@@ -78,9 +82,12 @@ create_order() {
 		--header "Authorization: Klarna $AUTHORIZATION_STRING" \
 		-d "$PAYLOAD" \
 		"$API_URL" 2>&1)
+	CURL_EXIT_CODE=$?
 	
 	ORDER_LOCATION=$(echo "$CURL_CREATE_ORDER" | grep -oE "Location: (.*)" | cut -d " " -f 2 | tr -d "\r")
+	
 	echo "$ORDER_LOCATION"
+	return $CURL_EXIT_CODE
 }
 
 get_order_snippet() {
@@ -94,8 +101,12 @@ get_order_snippet() {
 		--header "Authorization: Klarna $AUTHORIZATION_STRING" \
 		"$ORDER_LOCATION" 2>&1)
 	
+	CURL_EXIT_CODE=$?
+	
 	KLARNA_CHECKOUT_SNIPPET=$(echo "$CURL_GET_ORDER" | perl -0777 -ne 'print $1 if /\"snippet\":\"(.*?)\"},/s' | sed 's/\\\"/"/g')
+	
 	echo "$KLARNA_CHECKOUT_SNIPPET"
+	return $CURL_EXIT_CODE
 }
 
 echo "[`date '+%Y-%m-%d %H:%M:%S'`] Listening for requests. To create a sample order and get it's snippet send a request to http://127.0.0.1:$HTTP_PORT/order"
@@ -130,8 +141,20 @@ do
 		
 		# create order and then get it's snippet
 		ORDER_LOCATION=$(create_order "$PAYLOAD")
+		
+		if [ $? -gt 1 ]
+		then
+			printf "[`date '+%Y-%m-%d %H:%M:%S'`] ${COLOR_RED_BOLD}ERROR: Failed to create order${COLOR_RESET}\n"
+		fi
+		
 		KLARNA_CHECKOUT_SNIPPET=$(get_order_snippet "$ORDER_LOCATION")
-		echo "[`date '+%Y-%m-%d %H:%M:%S'`] Order info retrieved."
+		
+		if [ $? -gt 1 ]
+		then
+			printf "[`date '+%Y-%m-%d %H:%M:%S'`] ${COLOR_RED_BOLD}ERROR: Failed to retrieve checkout snippet${COLOR_RESET}\n"
+		else
+			echo "[`date '+%Y-%m-%d %H:%M:%S'`] Order info retrieved."
+		fi
 		
 		RESPONSE_BODY="$KLARNA_CHECKOUT_SNIPPET"
 	fi
