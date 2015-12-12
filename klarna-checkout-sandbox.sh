@@ -10,6 +10,7 @@ COLOR_RED_BOLD='\e[1;31m';
 trap cleanup INT
 
 function cleanup() {
+	rm /tmp/klarna-checkout-sandbox-response
 	kill $$ # self pid
 }
 
