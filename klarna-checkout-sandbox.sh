@@ -145,6 +145,7 @@ do
 		if [ $? -gt 1 ]
 		then
 			printf "[`date '+%Y-%m-%d %H:%M:%S'`] ${COLOR_RED_BOLD}ERROR: Failed to create order${COLOR_RESET}\n"
+			RESPONSE_CODE_STRING="424 Failed Dependency"
 		fi
 		
 		KLARNA_CHECKOUT_SNIPPET=$(get_order_snippet "$ORDER_LOCATION")
@@ -152,6 +153,7 @@ do
 		if [ $? -gt 1 ]
 		then
 			printf "[`date '+%Y-%m-%d %H:%M:%S'`] ${COLOR_RED_BOLD}ERROR: Failed to retrieve checkout snippet${COLOR_RESET}\n"
+			RESPONSE_CODE_STRING="424 Failed Dependency"
 		else
 			echo "[`date '+%Y-%m-%d %H:%M:%S'`] Order info retrieved."
 		fi
