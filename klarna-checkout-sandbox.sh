@@ -7,10 +7,12 @@ HTTP_PORT=8080
 COLOR_RESET='\e[0m'
 COLOR_RED_BOLD='\e[1;31m';
 
+RESPONSE_TEMP_FILE="/tmp/klarna-checkout-sandbox-response"
+
 trap cleanup INT
 
 function cleanup() {
-	rm /tmp/klarna-checkout-sandbox-response
+	rm "$RESPONSE_TEMP_FILE"
 	kill $$ # self pid
 }
 
@@ -113,7 +115,7 @@ get_order_snippet() {
 echo "[`date '+%Y-%m-%d %H:%M:%S'`] Listening for requests. To create a sample order and get it's snippet send a request to http://127.0.0.1:$HTTP_PORT/order"
 
 # creds to http://paulbuchheit.blogspot.ro/2007/04/webserver-in-bash.html which inspired this fifo and nc solution
-RESPONSE=/tmp/klarna-checkout-sandbox-response
+RESPONSE="$RESPONSE_TEMP_FILE"
 [ -p $RESPONSE ] || mkfifo $RESPONSE
 
 while true
