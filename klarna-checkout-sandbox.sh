@@ -5,7 +5,7 @@ HTTP_PORT=8080
 
 # for colored output
 COLOR_RESET='\e[0m'
-COLOR_RED_BOLD='\e[1;31m';
+COLOR_RED_BOLD='\e[1;31m'
 
 RESPONSE_TEMP_FILE="/tmp/klarna-checkout-sandbox-response"
 
